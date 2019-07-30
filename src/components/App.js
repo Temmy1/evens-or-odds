@@ -1,32 +1,41 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { startGame, cancelGame } from '../actions/settings';
-import { fetchDeckResult } from '../actions/deck';
+import { fetchNewDeck } from '../actions/deck';
+import fetchStates from '../reducers/fetchStates';
 import Instructions from './Instructions';
+import DrawCard from './DrawCard';
 
 
 class App extends Component {
   
   startGame = () => {
     this.props.startGame();
-
-    fetch('https://deckofcardsapi.com/api/deck/new/shuffle/')
-      .then(response => response.json())
-      .then(json => this.props.fetchDeckResult(json))
+    this.props.fetchNewDeck();
   }
   
   render () {
-    // console.log('this', this);
+    console.log('this', this);
+
+    if(this.props.fetchState === fetchStates.error) {
+      return (
+        <div>
+          <p>Pleade try reloading the App. An error occured</p>
+          <p>{this.props.message}</p>
+        </div>
+      )
+    }
     return (
-        <div className="wrapper">
-          <h2>
-          ♠️ ♦️ Evens or Odds ♦️ ♣️
-          </h2>
+      <div className="wrapper">
+        <h2>♠️ ♦️ Evens or Odds ♦️ ♣️</h2>
           {
             this.props.gameStarted ? (
               <div>
                 <h3>Game is on</h3>
+                <DrawCard />
+                <hr />
                 <button onClick={this.props.cancelGame}>Cancel game</button>
+               
               </div>
               
               ) : 
@@ -48,18 +57,27 @@ class App extends Component {
 
 // привязывает состояния из redux к props приложения
 const mapStateToProps = state => {
-  // console.log('state:', state);
+  // const { gameStarted } = state.settings;
+  // const { fetchState, message } = state.deck;
+  //equals 
+  const {
+    settings: { gameStarted },
+    deck: { fetchState, message }
+  } = state;
 
-  return { gameStarted: state.gameStarted };
+  return { gameStarted, fetchState, message };
 }
 // привязывает action из redux к props приложения
-const mapDispatchToProps = dispatch => {
-  return { 
-    startGame: () => dispatch(startGame()),
-    cancelGame: () => dispatch(cancelGame()),
-    fetchDeckResult: deckJson => dispatch(fetchDeckResult(deckJson))
-  };
-}
-const componentConnector = connect(mapStateToProps, mapDispatchToProps);
+// const mapDispatchToProps = dispatch => {
+//   return { 
+//     startGame: () => dispatch(startGame()),
+//     cancelGame: () => dispatch(cancelGame()),
+//     fetchNewDeck: () => fetchNewDeck(dispatch)
+//   };
+// }
+const componentConnector = connect(
+  mapStateToProps,
+  { startGame, cancelGame, fetchNewDeck }
+);
 
 export default componentConnector(App);

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { expandInstructions, collapseInstructions } from '../actions/settings';
 
@@ -42,6 +42,6 @@ const Instructions = props => {
 // export default componentConnector(Instructions);
 
 // short version
-export default connect( state => ({ instructionsExpanded: state.instructionsExpanded }), 
+export default connect( state => ({ instructionsExpanded: state.settings.instructionsExpanded }), 
    { expandInstructions, collapseInstructions }
 )(Instructions);
