@@ -22,7 +22,7 @@ const gameStateReducer = (state = DEFAULT_GAME_STATE, action ) => {
         (guess === 'even' && EVENS.includes(value)) ||
         (guess === 'odd' && ODDS.includes(value))
         ) {
-         return { ...state, correctGuess: correctGuess+1 };
+         return { ...state, correctGuess: correctGuess + 1 };
       }
       return state;
     default: 
